@@ -1,0 +1,4 @@
+For generating go-out and go-grpc_out files using:
+cd C:\Users\bkart\Projects\GO-Projects\E-Commerce\snap-basket\api\protos
+C:\protoc-31.1-win64\bin\protoc.exe *.proto --go_out=../ --go-grpc_out=../
+cd C:\Users\bkart\Projects\GO-Projects\E-Commerce\snap-basket

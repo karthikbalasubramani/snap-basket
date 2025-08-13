@@ -1,0 +1,34 @@
+syntax="proto3";
+
+option go_package="/pb";
+
+// Create User Service, Request and Response
+service CreateUserModelService{
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+}
+
+message CreateUserRequest{
+    string name=1;
+    string email=2;
+    string password=3;
+}
+
+message CreateUserResponse{
+    string message=1;
+}
+
+
+// Login User Service, Request and Response
+service LoginUserService{
+    rpc LoginUser(LoginUserRequest) returns (LoginUserResponse) {}
+}
+
+message LoginUserRequest{
+    string email=1;
+    string username=2;
+    string password=3;
+}
+
+message LoginUserResponse{
+    string message=1;
+}
