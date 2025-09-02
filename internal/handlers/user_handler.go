@@ -20,27 +20,34 @@ var Info = logx.CustomLogger.Info
 var Error = logx.CustomLogger.Error
 var Warn = logx.CustomLogger.Warn
 
+// Hashing Password
 func HashedPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
 
+// Verifying the hashed password
 func VerifyHashedPassword(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
 
 // Create User handler function which updates Database
-func HandlerCreateUser(req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+func HandlerCreateUser(req *pb.CreateUserRequest, db repo.InsertOneInterface) (*pb.CreateUserResponse, error) {
 	// Create a context with timeout for DB operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
+	// fmt.Printf("Incoming Create User Handler: %v", req)
 	// Validate input
-	if req.Name == "" || req.Email == "" || req.Password == "" {
-		return nil, status.Error(codes.InvalidArgument, "name, email and password are required")
+	if req.Name == "" {
+		return nil, status.Error(codes.InvalidArgument, "Name field cannot be empty")
 	}
-
+	if req.Email == "" {
+		return nil, status.Error(codes.InvalidArgument, "Email field cannot be empty")
+	}
+	if req.Password == "" {
+		return nil, status.Error(codes.InvalidArgument, "Password field cannot be empty")
+	}
 	// Hashing Password using bcrypt
 	hashedpassword, err := HashedPassword(req.Password)
 	if err != nil {
@@ -56,7 +63,7 @@ func HandlerCreateUser(req *pb.CreateUserRequest) (*pb.CreateUserResponse, error
 	}
 
 	// Insert user into MongoDB collection
-	result, err := repo.UserCollection.InsertOne(ctx, user)
+	result, err := db.InsertOne(ctx, user)
 	if err != nil {
 		// Wrap error with gRPC Internal code
 		return nil, status.Errorf(codes.Internal, "Failed to create user: %v", err)

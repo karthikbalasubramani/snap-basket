@@ -6,6 +6,7 @@ import (
 	"github.com/karthikbalasubramani/snap-basket/api/pb"
 	"github.com/karthikbalasubramani/snap-basket/internal/handlers"
 	logx "github.com/karthikbalasubramani/snap-basket/internal/logger"
+	"github.com/karthikbalasubramani/snap-basket/internal/repository"
 )
 
 // Loggers
@@ -21,7 +22,7 @@ type UserServer struct {
 // Create user server function
 func (s *UserServer) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	Info.Println("User Creation Request Received")
-	return handlers.HandlerCreateUser(req)
+	return handlers.HandlerCreateUser(req, repository.UserCollection)
 }
 
 // Login Uset server function
